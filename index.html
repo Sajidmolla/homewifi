@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hotspot Zone — Wi-Fi Billing & Expiry Manager</title>
+  <title>Hotspot Zone — Multi-User Wi-Fi Billing & Admin Portal</title>
   <meta name="theme-color" content="#0B0D12" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -43,7 +43,7 @@
 </head>
 <body class="antialiased selection:bg-rose-500/30 selection:text-white">
 
-  <!-- ADMIN LOGIN GATE -->
+  <!-- AUTH GATE (LOGIN & SIGN UP) -->
   <div id="authGate" class="min-h-screen flex items-center justify-center p-4">
     <div class="glass-card w-full max-w-md rounded-2xl p-7 shadow-2xl">
       <div class="flex flex-col items-center text-center mb-6">
@@ -52,36 +52,80 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
           </svg>
         </div>
-        <span class="px-3 py-0.5 rounded-full text-[10px] font-semibold tracking-wider uppercase bg-rose-500/15 text-rose-300 border border-rose-500/30 mb-2">
-          Single Admin Access
+        <span class="px-3 py-0.5 rounded-full text-[10px] font-semibold tracking-wider uppercase bg-sky-500/15 text-sky-300 border border-sky-500/30 mb-2">
+          Hotspot Billing Cloud
         </span>
         <h1 class="text-2xl font-bold text-white">Hotspot Zone</h1>
-        <p class="text-xs text-slate-400 mt-1">Authorized Wi-Fi Billing & Expiry Admin Portal</p>
+        <p class="text-xs text-slate-400 mt-1">Wi-Fi Client & Billing Management Portal</p>
       </div>
 
-      <form id="loginForm" onsubmit="handleAdminLogin(event)" class="space-y-4">
+      <!-- Auth Mode Switcher -->
+      <div class="grid grid-cols-2 gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-white/10 mb-5">
+        <button type="button" id="authTabLogin" onclick="setAuthTab('login')"
+          class="py-2 rounded-lg text-xs font-semibold bg-white/10 text-white transition">
+          Sign In
+        </button>
+        <button type="button" id="authTabSignup" onclick="setAuthTab('signup')"
+          class="py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">
+          Create Account
+        </button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm" onsubmit="handleUserLogin(event)" class="space-y-4">
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1.5">Admin Email</label>
-          <input id="loginEmail" type="email" placeholder="Enter your admin email" required
+          <label class="block text-xs font-medium text-slate-300 mb-1.5">Email Address</label>
+          <input id="loginEmail" type="email" placeholder="Enter your email" required
             class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-white/10 text-white text-sm focus:outline-none focus:border-sky-500" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1.5">Admin Password</label>
-          <input id="loginPassword" type="password" placeholder="Enter your admin password" required
+          <label class="block text-xs font-medium text-slate-300 mb-1.5">Password</label>
+          <input id="loginPassword" type="password" placeholder="Enter your password" required
             class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-white/10 text-white text-sm focus:outline-none focus:border-sky-500" />
         </div>
 
-        <div id="authErrorBox" class="hidden rounded-xl bg-rose-500/15 border border-rose-500/40 px-3.5 py-2.5 text-xs text-rose-200"></div>
+        <div id="loginErrorBox" class="hidden rounded-xl bg-rose-500/15 border border-rose-500/40 px-3.5 py-2.5 text-xs text-rose-200"></div>
 
         <button id="loginSubmitBtn" type="submit"
-          class="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-indigo-500 via-blue-500 to-sky-500 hover:opacity-95 transition shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2">
-          <span>🔒 Unlock Admin Dashboard</span>
+          class="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-indigo-500 via-blue-500 to-sky-500 hover:opacity-95 transition shadow-lg shadow-blue-500/20">
+          Sign In to Dashboard
+        </button>
+      </form>
+
+      <!-- SIGNUP FORM -->
+      <form id="signupForm" onsubmit="handleUserSignup(event)" class="hidden space-y-3.5">
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Your Name / Zone Name</label>
+          <input id="signupName" type="text" placeholder="e.g. Rahim Wi-Fi Zone" required
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-white/10 text-white text-sm focus:outline-none focus:border-sky-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Phone Number</label>
+          <input id="signupPhone" type="text" placeholder="017XXXXXXXX" required
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-white/10 text-white text-sm focus:outline-none focus:border-sky-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Email Address</label>
+          <input id="signupEmail" type="email" placeholder="Enter your email" required
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-white/10 text-white text-sm focus:outline-none focus:border-sky-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Password (Min 6 characters)</label>
+          <input id="signupPassword" type="password" minlength="6" placeholder="Create a password" required
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-white/10 text-white text-sm focus:outline-none focus:border-sky-500" />
+        </div>
+
+        <div id="signupErrorBox" class="hidden rounded-xl bg-rose-500/15 border border-rose-500/40 px-3.5 py-2.5 text-xs text-rose-200"></div>
+
+        <button id="signupSubmitBtn" type="submit"
+          class="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:opacity-95 transition shadow-lg shadow-emerald-500/20">
+          Create Free Account
         </button>
       </form>
 
       <div class="mt-5 pt-4 border-t border-white/10">
         <p id="serverStatusHint" class="text-[11px] text-center text-slate-400">
-          Verifying secure server connection...
+          Connecting to secure cloud...
         </p>
       </div>
     </div>
@@ -97,20 +141,21 @@
           <span class="font-bold text-sm text-white">Hotspot Zone</span>
         </div>
         <span id="ssidBadge" class="px-2.5 py-1 rounded-full text-xs font-medium bg-white/5 border border-white/10 text-slate-300">
-          HomeWiFi_Zone
+          My Wi-Fi Zone
         </span>
         <button onclick="switchTab('billing')" class="px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/15 border border-rose-500/30 text-rose-200 flex items-center gap-1.5">
           <span>🔔 Alerts:</span>
           <strong id="topAlertCount">0</strong>
         </button>
-        <span id="syncModePill" class="px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
+        <span id="roleTopBadge" class="px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
           ● Cloud Connected
         </span>
       </div>
 
       <div class="flex items-center gap-2 flex-wrap">
+        <span id="accountNameBadge" class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-sky-300 font-medium"></span>
         <span class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-300">
-          📅 Today: <strong id="todayDateLabel" class="text-white"></strong>
+          📅 <strong id="todayDateLabel" class="text-white"></strong>
         </span>
         <button onclick="exportBackupJSON()" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-200 transition">
           ⬇ Export
@@ -119,11 +164,21 @@
           ⬆ Import
           <input type="file" accept=".json" class="hidden" onchange="importBackupJSON(event)" />
         </label>
-        <button onclick="handleAdminLogout()" class="px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-xs font-medium text-rose-200 transition">
+        <button onclick="handleUserLogout()" class="px-3 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-xs font-medium text-rose-200 transition">
           Logout
         </button>
       </div>
     </header>
+
+    <!-- Admin Viewing Banner (Visible only when Admin inspects another user) -->
+    <div id="adminInspectBanner" class="hidden rounded-2xl bg-amber-500/15 border border-amber-500/40 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="text-xs text-amber-200">
+        👁️ <strong>Admin Inspection Mode:</strong> Viewing account of <strong id="inspectTargetLabel" class="text-white underline"></strong> (Read-Only / Live Monitor)
+      </div>
+      <button onclick="exitInspectionMode()" class="px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:opacity-90">
+        ← Back to Admin Overview
+      </button>
+    </div>
 
     <!-- Main Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
@@ -133,23 +188,28 @@
           <div class="flex items-center justify-between">
             <span class="font-semibold text-sm text-white">Navigation</span>
             <span id="connectionPill" class="px-2.5 py-0.5 rounded-full text-[11px] bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
-              Admin
+              Member
             </span>
           </div>
           <p class="text-xs text-slate-400">Personal Wi-Fi billing + expiry alerts</p>
 
           <nav class="space-y-2 pt-1">
+            <!-- Admin Master Overview Button (Only visible to Super Admin) -->
+            <button id="navAdminMasterBtn" data-nav="admin" onclick="switchTab('admin')" class="hidden nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-semibold text-amber-300 hover:bg-amber-500/10 border border-amber-500/30 flex items-center gap-2.5 transition">
+              <span>👑</span><span>Admin Master Panel</span>
+            </button>
+
             <button data-nav="dashboard" onclick="switchTab('dashboard')" class="nav-btn nav-active w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2.5 transition">
-              <span>📊</span><span>Dashboard</span>
+              <span>📊</span><span>My Dashboard</span>
             </button>
             <button data-nav="customers" onclick="switchTab('customers')" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/5 border border-transparent flex items-center gap-2.5 transition">
-              <span>👥</span><span>Wi-Fi Users</span>
+              <span>👥</span><span>My Wi-Fi Clients</span>
             </button>
             <button data-nav="billing" onclick="switchTab('billing')" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/5 border border-transparent flex items-center gap-2.5 transition">
               <span>🧾</span><span>Billing & Expiry</span>
             </button>
             <button data-nav="payments" onclick="switchTab('payments')" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/5 border border-transparent flex items-center gap-2.5 transition">
-              <span>💳</span><span>Payments</span>
+              <span>💳</span><span>My Collections</span>
             </button>
             <button data-nav="settings" onclick="switchTab('settings')" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/5 border border-transparent flex items-center gap-2.5 transition">
               <span>⚙️</span><span>Router & Settings</span>
@@ -162,7 +222,7 @@
           <div class="flex items-center gap-2 text-sm font-semibold text-white">
             <span>🔔</span><span>Alerts</span>
           </div>
-          <p class="text-xs text-slate-400">Due soon + Overdue Wi-Fi users</p>
+          <p class="text-xs text-slate-400">Due soon + Overdue clients</p>
           <button onclick="switchTab('billing', 'overdue')" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold text-xs shadow-lg shadow-rose-500/20 flex items-center justify-center gap-2">
             <span>⚠️ Overdue (<span id="sideOverdueCount">0</span>)</span>
           </button>
@@ -174,16 +234,82 @@
 
       <!-- Main Content Panel -->
       <main class="lg:col-span-9 space-y-5">
+
+        <!-- ADMIN MASTER OVERVIEW TAB (SUPER ADMIN ONLY) -->
+        <section id="tab-admin" class="tab-panel hidden glass-card rounded-2xl p-5 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 class="text-xl font-bold text-amber-300">👑 Admin Master Overview</h2>
+              <p class="text-xs text-slate-400">Monitor all registered operators, client counts, collections & live activity</p>
+            </div>
+            <button onclick="loadAllOperatorsForAdmin()" class="px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 font-semibold text-xs">
+              🔄 Refresh All Accounts
+            </button>
+          </div>
+
+          <!-- Global Totals Across All Operators -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+            <div class="rounded-2xl bg-white/[0.03] border border-white/10 p-4">
+              <div class="text-xs text-slate-400 mb-2">Total Accounts</div>
+              <div id="adminTotalOperators" class="text-2xl font-bold text-white">0</div>
+            </div>
+            <div class="rounded-2xl bg-white/[0.03] border border-white/10 p-4">
+              <div class="text-xs text-slate-400 mb-2">Total Clients (All)</div>
+              <div id="adminTotalClients" class="text-2xl font-bold text-sky-400">0</div>
+            </div>
+            <div class="rounded-2xl bg-white/[0.03] border border-white/10 p-4">
+              <div class="text-xs text-slate-400 mb-2">Total Overdue</div>
+              <div id="adminTotalOverdue" class="text-2xl font-bold text-rose-400">0</div>
+            </div>
+            <div class="rounded-2xl bg-white/[0.03] border border-white/10 p-4">
+              <div class="text-xs text-slate-400 mb-2">Total Collection (All)</div>
+              <div class="text-2xl font-bold text-emerald-400">৳ <span id="adminTotalCollection">0</span></div>
+            </div>
+          </div>
+
+          <!-- Operators List Table -->
+          <div class="rounded-2xl bg-white/[0.02] border border-white/10 overflow-hidden">
+            <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-200">Registered Accounts & Client Summary</span>
+              <input id="adminOperatorSearch" oninput="renderAdminMasterTable()" type="text" placeholder="Search operator name or email..."
+                class="px-3 py-1.5 rounded-lg bg-slate-900/90 border border-white/10 text-xs text-white focus:outline-none focus:border-amber-400" />
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-white/[0.04] text-slate-300">
+                  <tr>
+                    <th class="px-4 py-3">Account / Zone Owner</th>
+                    <th class="px-4 py-3">Clients</th>
+                    <th class="px-4 py-3">Active / Overdue</th>
+                    <th class="px-4 py-3">Total Collected</th>
+                    <th class="px-4 py-3">Last Active</th>
+                    <th class="px-4 py-3 text-right">Inspect</th>
+                  </tr>
+                </thead>
+                <tbody id="adminOperatorsBody" class="divide-y divide-white/5"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Global Recent Activity Feed -->
+          <div class="rounded-2xl bg-white/[0.02] border border-white/10 overflow-hidden">
+            <div class="px-4 py-3 border-b border-white/10">
+              <span class="text-xs font-semibold text-slate-200">Recent Activity Across All Accounts</span>
+            </div>
+            <div id="adminActivityFeed" class="divide-y divide-white/5 max-h-64 overflow-y-auto text-xs"></div>
+          </div>
+        </section>
+
         <!-- DASHBOARD TAB -->
         <section id="tab-dashboard" class="tab-panel glass-card rounded-2xl p-5 space-y-5">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 class="text-xl font-bold text-white">Dashboard</h2>
-              <p class="text-xs text-slate-400">Hotspot Users • Due/Overdue • Collections</p>
+              <p class="text-xs text-slate-400">Clients • Due/Overdue • Collections</p>
             </div>
             <div class="flex items-center gap-2.5">
               <button onclick="openUserModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-sky-400 text-white font-semibold text-xs shadow-lg shadow-sky-500/20 hover:opacity-95 transition">
-                👤+ Add User
+                👤+ Add Client
               </button>
               <button onclick="switchTab('billing')" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-semibold text-xs transition">
                 🧾 Open Billing
@@ -194,7 +320,7 @@
           <!-- 4 Metric Cards -->
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3.5">
             <div class="rounded-2xl bg-white/[0.03] border border-white/10 p-4">
-              <div class="text-xs text-slate-400 mb-2">Total Users</div>
+              <div class="text-xs text-slate-400 mb-2">Total Clients</div>
               <div id="statTotal" class="text-2xl font-bold text-white">0</div>
             </div>
             <div class="rounded-2xl bg-white/[0.03] border border-white/10 p-4">
@@ -240,17 +366,17 @@
             </div>
           </div>
 
-          <!-- Recent Users Quick Table -->
+          <!-- Recent Clients Quick Table -->
           <div class="rounded-2xl bg-white/[0.02] border border-white/10 overflow-hidden">
             <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-200">Active & Expiring Hotspot Devices</span>
+              <span class="text-xs font-semibold text-slate-200">Active & Expiring Clients</span>
               <button onclick="switchTab('customers')" class="text-xs text-sky-400 hover:underline">View All →</button>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
                 <thead class="bg-white/[0.03] text-slate-400">
                   <tr>
-                    <th class="px-4 py-2.5">User / Device</th>
+                    <th class="px-4 py-2.5">Client / Device</th>
                     <th class="px-4 py-2.5">MAC Address</th>
                     <th class="px-4 py-2.5">Expiry Date</th>
                     <th class="px-4 py-2.5">Status</th>
@@ -267,14 +393,14 @@
         <section id="tab-customers" class="tab-panel hidden glass-card rounded-2xl p-5 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 class="text-xl font-bold text-white">Wi-Fi Hotspot Users</h2>
-              <p class="text-xs text-slate-400">Manage MAC addresses, packages & router block status</p>
+              <h2 class="text-xl font-bold text-white">My Wi-Fi Clients</h2>
+              <p class="text-xs text-slate-400">Manage your own clients, MAC addresses & packages</p>
             </div>
             <div class="flex items-center gap-2">
               <input id="userSearchInput" oninput="renderAll()" type="text" placeholder="Search name, phone, MAC..."
                 class="px-3 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-xs text-white focus:outline-none focus:border-sky-500" />
               <button onclick="openUserModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-sky-400 text-white font-semibold text-xs">
-                + Add User
+                + Add Client
               </button>
             </div>
           </div>
@@ -283,7 +409,7 @@
             <table class="w-full text-left text-xs">
               <thead class="bg-white/[0.04] text-slate-300">
                 <tr>
-                  <th class="px-4 py-3">User & Phone</th>
+                  <th class="px-4 py-3">Client & Phone</th>
                   <th class="px-4 py-3">MAC Address</th>
                   <th class="px-4 py-3">Package</th>
                   <th class="px-4 py-3">Expiry</th>
@@ -315,7 +441,7 @@
             <table class="w-full text-left text-xs">
               <thead class="bg-white/[0.04] text-slate-300">
                 <tr>
-                  <th class="px-4 py-3">User</th>
+                  <th class="px-4 py-3">Client</th>
                   <th class="px-4 py-3">Fee (BDT)</th>
                   <th class="px-4 py-3">Due Date</th>
                   <th class="px-4 py-3">Alert Status</th>
@@ -344,7 +470,7 @@
               <thead class="bg-white/[0.04] text-slate-300">
                 <tr>
                   <th class="px-4 py-3">Date</th>
-                  <th class="px-4 py-3">User</th>
+                  <th class="px-4 py-3">Client</th>
                   <th class="px-4 py-3">Method</th>
                   <th class="px-4 py-3">Note / TrxID</th>
                   <th class="px-4 py-3 text-right">Amount</th>
@@ -359,7 +485,7 @@
         <section id="tab-settings" class="tab-panel hidden glass-card rounded-2xl p-5 space-y-4">
           <div>
             <h2 class="text-xl font-bold text-white">Hotspot & Router Settings</h2>
-            <p class="text-xs text-slate-400">Configure TP-Link TL-WR841HP gateway IP, SSID & default billing rules</p>
+            <p class="text-xs text-slate-400">Configure your Wi-Fi SSID, Router IP & default billing rules</p>
           </div>
 
           <form onsubmit="saveSettingsForm(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
@@ -368,7 +494,7 @@
               <input id="setSsid" type="text" class="w-full px-3.5 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-sm text-white" />
             </div>
             <div>
-              <label class="block text-xs text-slate-300 mb-1">Router Admin IP (TP-Link TL-WR841HP)</label>
+              <label class="block text-xs text-slate-300 mb-1">Router Admin IP</label>
               <input id="setRouterIp" type="text" class="w-full px-3.5 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-sm text-white" />
             </div>
             <div>
@@ -394,17 +520,17 @@
     </div>
   </div>
 
-  <!-- ADD / EDIT USER MODAL -->
+  <!-- ADD / EDIT CLIENT MODAL -->
   <div id="userModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="glass-card w-full max-w-md rounded-2xl p-6 space-y-4">
       <div class="flex items-center justify-between">
-        <h3 id="userModalTitle" class="text-lg font-bold text-white">Add Hotspot User</h3>
+        <h3 id="userModalTitle" class="text-lg font-bold text-white">Add Wi-Fi Client</h3>
         <button onclick="closeUserModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
       </div>
       <form onsubmit="saveUserForm(event)" class="space-y-3">
         <input type="hidden" id="editUserId" />
         <div>
-          <label class="block text-xs text-slate-300 mb-1">Customer / Device Name</label>
+          <label class="block text-xs text-slate-300 mb-1">Client / Device Name</label>
           <input id="userNameInput" type="text" required placeholder="e.g. Rahim Bhai (Redmi Note 12)"
             class="w-full px-3.5 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-sm text-white" />
         </div>
@@ -438,7 +564,7 @@
         </div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" onclick="closeUserModal()" class="px-4 py-2 rounded-xl bg-white/5 text-xs text-slate-300">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-xl bg-sky-500 text-white font-semibold text-xs">Save User</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-sky-500 text-white font-semibold text-xs">Save Client</button>
         </div>
       </form>
     </div>
@@ -453,7 +579,7 @@
       </div>
       <form onsubmit="savePaymentForm(event)" class="space-y-3">
         <div>
-          <label class="block text-xs text-slate-300 mb-1">Select User</label>
+          <label class="block text-xs text-slate-300 mb-1">Select Client</label>
           <select id="payUserSelect" class="w-full px-3.5 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-sm text-white"></select>
         </div>
         <div class="grid grid-cols-2 gap-3">
@@ -494,15 +620,17 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-    const ALLOWED_ADMIN_EMAIL = "homewifi@gmail.com";
-    const STORAGE_KEY = "hotspot_zone_state_v1";
+    const SUPER_ADMIN_EMAIL = "homewifi@gmail.com";
 
     let firebaseAuth = null;
     let firebaseDb = null;
-    let isCloudAuthenticated = false;
+    let currentUser = null;
+    let activeWorkspaceUid = null;
+    let isSuperAdmin = false;
+    let allOperatorsList = [];
     let billingFilter = "all";
 
     function todayISO(offsetDays = 0) {
@@ -511,28 +639,32 @@
       return d.toISOString().split("T")[0];
     }
 
-    let appState = {
-      settings: {
-        ssid: "HomeWiFi_Zone",
-        routerIp: "192.168.0.1",
-        cycleDays: 30,
-        dueSoonDays: 5,
-        paymentNumber: "01700000000"
-      },
-      users: [
-        { id: "u1", name: "Tanvir Ahmed", phone: "01711223344", mac: "A4:50:46:8E:12:9C", fee: 500, expiryDate: todayISO(18), blocked: false },
-        { id: "u2", name: "Sadia Islam", phone: "01819887766", mac: "7C:2A:31:4F:90:1B", fee: 500, expiryDate: todayISO(3), blocked: false },
-        { id: "u3", name: "Rafiul Karim", phone: "01912345678", mac: "D8:3B:BF:10:44:2A", fee: 600, expiryDate: todayISO(-2), blocked: true }
-      ],
-      payments: [
-        { id: "p1", date: todayISO(0), userName: "Tanvir Ahmed", method: "bKash", note: "Monthly Wi-Fi", amount: 500 }
-      ]
-    };
-
-    const localSaved = localStorage.getItem(STORAGE_KEY);
-    if (localSaved) {
-      try { appState = JSON.parse(localSaved); } catch (_) {}
+    function createDefaultWorkspace(profile = {}) {
+      return {
+        profile: {
+          uid: profile.uid || "",
+          email: profile.email || "",
+          ownerName: profile.ownerName || "Wi-Fi Operator",
+          phone: profile.phone || "",
+          createdAt: profile.createdAt || new Date().toISOString(),
+          lastActive: new Date().toISOString()
+        },
+        settings: {
+          ssid: profile.ownerName ? `${profile.ownerName} Wi-Fi` : "HomeWiFi_Zone",
+          routerIp: "192.168.0.1",
+          cycleDays: 30,
+          dueSoonDays: 5,
+          paymentNumber: profile.phone || ""
+        },
+        users: [],
+        payments: [],
+        activityLog: [
+          { time: new Date().toLocaleString(), action: "Account initialized" }
+        ]
+      };
     }
+
+    let appState = createDefaultWorkspace();
 
     function showToast(msg) {
       const el = document.getElementById("toastBox");
@@ -545,105 +677,266 @@
     function formatFriendlyAuthError(err) {
       const code = (err && err.code) ? err.code : "";
       if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found") {
-        return "Incorrect admin email or password. Please try again.";
+        return "Incorrect email or password. Please try again.";
+      }
+      if (code === "auth/email-already-in-use") {
+        return "This email is already registered. Please Sign In instead.";
+      }
+      if (code === "auth/weak-password") {
+        return "Password should be at least 6 characters.";
       }
       if (code === "auth/too-many-requests") {
-        return "Too many failed login attempts. Please wait a few minutes and try again.";
-      }
-      if (code === "auth/operation-not-allowed") {
-        return "Email/Password sign-in is currently disabled on the authentication server.";
+        return "Too many attempts. Please wait a few minutes and try again.";
       }
       if (code === "auth/network-request-failed") {
-        return "Network error. Please check your internet connection and try again.";
+        return "Network error. Please check your internet connection.";
       }
-      if (code === "auth/invalid-email") {
-        return "Please enter a valid admin email address.";
+      return "Authentication failed. Please verify your details and try again.";
+    }
+
+    window.setAuthTab = function (tab) {
+      const loginForm = document.getElementById("loginForm");
+      const signupForm = document.getElementById("signupForm");
+      const tabLogin = document.getElementById("authTabLogin");
+      const tabSignup = document.getElementById("authTabSignup");
+      document.getElementById("loginErrorBox").classList.add("hidden");
+      document.getElementById("signupErrorBox").classList.add("hidden");
+
+      if (tab === "signup") {
+        loginForm.classList.add("hidden");
+        signupForm.classList.remove("hidden");
+        tabSignup.classList.add("bg-white/10", "text-white");
+        tabSignup.classList.remove("text-slate-400");
+        tabLogin.classList.remove("bg-white/10", "text-white");
+        tabLogin.classList.add("text-slate-400");
+      } else {
+        signupForm.classList.add("hidden");
+        loginForm.classList.remove("hidden");
+        tabLogin.classList.add("bg-white/10", "text-white");
+        tabLogin.classList.remove("text-slate-400");
+        tabSignup.classList.remove("bg-white/10", "text-white");
+        tabSignup.classList.add("text-slate-400");
       }
-      return "Authentication failed. Please check your password and try again.";
+    };
+
+    function logActivity(actionText) {
+      if (!appState.activityLog) appState.activityLog = [];
+      appState.activityLog.unshift({
+        time: new Date().toLocaleString(),
+        action: actionText
+      });
+      if (appState.activityLog.length > 30) appState.activityLog.length = 30;
+      if (appState.profile) appState.profile.lastActive = new Date().toISOString();
     }
 
     async function persistState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-      if (firebaseDb && isCloudAuthenticated) {
-        try {
-          await setDoc(doc(firebaseDb, "hotspot_zone", "main_state"), appState);
-        } catch (err) {
-          console.error("Cloud sync error:", err);
-        }
+      if (!firebaseDb || !activeWorkspaceUid) return;
+      try {
+        await setDoc(doc(firebaseDb, "workspaces", activeWorkspaceUid), appState);
+      } catch (err) {
+        console.error("Workspace save error:", err);
       }
     }
 
-    async function loadCloudState() {
-      if (!firebaseDb || !isCloudAuthenticated) return;
+    async function loadWorkspaceByUid(uid, fallbackProfile = {}) {
+      if (!firebaseDb || !uid) return;
+      activeWorkspaceUid = uid;
       try {
-        const snap = await getDoc(doc(firebaseDb, "hotspot_zone", "main_state"));
+        const snap = await getDoc(doc(firebaseDb, "workspaces", uid));
         if (snap.exists()) {
           appState = snap.data();
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+          if (!appState.profile) appState.profile = fallbackProfile;
         } else {
-          await persistState();
+          appState = createDefaultWorkspace(fallbackProfile);
+          await setDoc(doc(firebaseDb, "workspaces", uid), appState);
         }
         renderAll();
       } catch (err) {
-        console.error("Cloud load error:", err);
+        console.error("Workspace load error:", err);
       }
     }
+
+    window.loadAllOperatorsForAdmin = async function () {
+      if (!firebaseDb || !isSuperAdmin) return;
+      try {
+        const snap = await getDocs(collection(firebaseDb, "workspaces"));
+        allOperatorsList = [];
+        snap.forEach(d => {
+          allOperatorsList.push({ uid: d.id, ...d.data() });
+        });
+        renderAdminMasterTable();
+      } catch (err) {
+        console.error("Admin fetch error:", err);
+        showToast("Could not load operator accounts. Check Firestore security rules.");
+      }
+    };
+
+    window.renderAdminMasterTable = function () {
+      const q = (document.getElementById("adminOperatorSearch")?.value || "").toLowerCase();
+      let totalClients = 0, totalOverdue = 0, totalCollected = 0;
+      let activityItems = [];
+
+      allOperatorsList.forEach(op => {
+        const users = op.users || [];
+        const payments = op.payments || [];
+        totalClients += users.length;
+        users.forEach(u => {
+          if (getUserStatus(u, op.settings).key === "overdue") totalOverdue++;
+        });
+        payments.forEach(p => {
+          totalCollected += Number(p.amount || 0);
+        });
+        (op.activityLog || []).slice(0, 5).forEach(act => {
+          activityItems.push({
+            owner: op.profile?.ownerName || op.profile?.email || op.uid,
+            time: act.time,
+            action: act.action
+          });
+        });
+      });
+
+      document.getElementById("adminTotalOperators").textContent = allOperatorsList.length;
+      document.getElementById("adminTotalClients").textContent = totalClients;
+      document.getElementById("adminTotalOverdue").textContent = totalOverdue;
+      document.getElementById("adminTotalCollection").textContent = totalCollected;
+
+      const filtered = allOperatorsList.filter(op => {
+        const name = (op.profile?.ownerName || "").toLowerCase();
+        const email = (op.profile?.email || "").toLowerCase();
+        const phone = (op.profile?.phone || "").toLowerCase();
+        return name.includes(q) || email.includes(q) || phone.includes(q);
+      });
+
+      document.getElementById("adminOperatorsBody").innerHTML = filtered.map(op => {
+        const users = op.users || [];
+        const payments = op.payments || [];
+        const overdueCount = users.filter(u => getUserStatus(u, op.settings).key === "overdue").length;
+        const activeCount = users.length - overdueCount;
+        const collected = payments.reduce((s, p) => s + Number(p.amount || 0), 0);
+        const ownerName = op.profile?.ownerName || "Operator";
+        const email = op.profile?.email || op.uid;
+        const lastAct = op.profile?.lastActive ? new Date(op.profile.lastActive).toLocaleDateString() : "—";
+
+        return `<tr>
+          <td class="px-4 py-3">
+            <div class="font-semibold text-white">${ownerName} ${email.toLowerCase() === SUPER_ADMIN_EMAIL ? '<span class="ml-1 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px]">ADMIN</span>' : ''}</div>
+            <div class="text-[11px] text-slate-400">${email} ${op.profile?.phone ? '• ' + op.profile.phone : ''}</div>
+          </td>
+          <td class="px-4 py-3 font-bold text-sky-300">${users.length} Clients</td>
+          <td class="px-4 py-3">
+            <span class="text-emerald-400">${activeCount} Active</span> /
+            <span class="text-rose-400">${overdueCount} Overdue</span>
+          </td>
+          <td class="px-4 py-3 font-semibold text-emerald-300">৳ ${collected}</td>
+          <td class="px-4 py-3 text-slate-400">${lastAct}</td>
+          <td class="px-4 py-3 text-right">
+            <button onclick="inspectOperatorWorkspace('${op.uid}')" class="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 font-semibold">
+              👁️ View Account
+            </button>
+          </td>
+        </tr>`;
+      }).join("") || `<tr><td colspan="6" class="px-4 py-6 text-center text-slate-400">No accounts found.</td></tr>`;
+
+      document.getElementById("adminActivityFeed").innerHTML = activityItems.slice(0, 20).map(item => `
+        <div class="px-4 py-2.5 flex items-center justify-between gap-2">
+          <div>
+            <span class="font-semibold text-sky-300">${item.owner}:</span>
+            <span class="text-slate-200">${item.action}</span>
+          </div>
+          <span class="text-[11px] text-slate-500 shrink-0">${item.time}</span>
+        </div>
+      `).join("") || `<div class="px-4 py-6 text-center text-slate-400">No activity recorded yet.</div>`;
+    };
+
+    window.inspectOperatorWorkspace = async function (targetUid) {
+      if (!isSuperAdmin) return;
+      const target = allOperatorsList.find(x => x.uid === targetUid);
+      if (!target) return;
+      await loadWorkspaceByUid(targetUid, target.profile || {});
+      document.getElementById("adminInspectBanner").classList.remove("hidden");
+      document.getElementById("inspectTargetLabel").textContent = `${target.profile?.ownerName || "Account"} (${target.profile?.email || targetUid})`;
+      switchTab("dashboard");
+    };
+
+    window.exitInspectionMode = async function () {
+      if (!currentUser) return;
+      document.getElementById("adminInspectBanner").classList.add("hidden");
+      await loadWorkspaceByUid(currentUser.uid, { uid: currentUser.uid, email: currentUser.email, ownerName: "Super Admin" });
+      await loadAllOperatorsForAdmin();
+      switchTab("admin");
+    };
 
     async function initRuntimeAuth() {
       const hint = document.getElementById("serverStatusHint");
       try {
         const res = await fetch("/api/firebase-config");
-        if (!res.ok) throw new Error("Config endpoint unavailable");
+        if (!res.ok) throw new Error("Config unavailable");
         const cfg = await res.json();
         if (!cfg || !cfg.apiKey) {
-          hint.textContent = "⚠️ Server API configuration missing in deployment environment.";
+          hint.textContent = "⚠️ Server API configuration missing.";
           return;
         }
         const app = initializeApp(cfg);
         firebaseAuth = getAuth(app);
         firebaseDb = getFirestore(app);
-        hint.textContent = "🔒 Encrypted Admin Authentication Ready";
+        hint.textContent = "🔒 Cloud Authentication Ready";
 
         onAuthStateChanged(firebaseAuth, async (user) => {
-          if (user && user.email && user.email.toLowerCase() === ALLOWED_ADMIN_EMAIL) {
-            isCloudAuthenticated = true;
+          if (user) {
+            currentUser = user;
+            const emailLower = (user.email || "").toLowerCase();
+            isSuperAdmin = (emailLower === SUPER_ADMIN_EMAIL);
+
             document.getElementById("authGate").classList.add("hidden");
             document.getElementById("appShell").classList.remove("hidden");
-            document.getElementById("syncModePill").textContent = "● Cloud Connected";
-            document.getElementById("connectionPill").textContent = "Online";
-            await loadCloudState();
-            renderAll();
+            document.getElementById("adminInspectBanner").classList.add("hidden");
+
+            const pendingSignup = JSON.parse(sessionStorage.getItem("pending_signup_profile") || "null");
+            sessionStorage.removeItem("pending_signup_profile");
+
+            await loadWorkspaceByUid(user.uid, {
+              uid: user.uid,
+              email: user.email,
+              ownerName: pendingSignup?.ownerName || (isSuperAdmin ? "System Admin" : user.email.split("@")[0]),
+              phone: pendingSignup?.phone || ""
+            });
+
+            document.getElementById("accountNameBadge").textContent = `👤 ${appState.profile?.ownerName || user.email}`;
+
+            if (isSuperAdmin) {
+              document.getElementById("navAdminMasterBtn").classList.remove("hidden");
+              document.getElementById("connectionPill").textContent = "Super Admin";
+              document.getElementById("roleTopBadge").textContent = "👑 Master Admin Access";
+              await loadAllOperatorsForAdmin();
+              switchTab("admin");
+            } else {
+              document.getElementById("navAdminMasterBtn").classList.add("hidden");
+              document.getElementById("connectionPill").textContent = "Operator";
+              document.getElementById("roleTopBadge").textContent = "● Cloud Connected";
+              switchTab("dashboard");
+            }
           } else {
-            isCloudAuthenticated = false;
-            if (user) await signOut(firebaseAuth);
+            currentUser = null;
+            isSuperAdmin = false;
+            activeWorkspaceUid = null;
           }
         });
       } catch (_) {
-        hint.textContent = "⚠️ Unable to reach authentication service. Check server deployment.";
+        hint.textContent = "⚠️ Unable to connect to cloud service.";
       }
     }
 
-    window.handleAdminLogin = async function (e) {
+    window.handleUserLogin = async function (e) {
       e.preventDefault();
-      const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+      const email = document.getElementById("loginEmail").value.trim();
       const pass = document.getElementById("loginPassword").value;
-      const errBox = document.getElementById("authErrorBox");
+      const errBox = document.getElementById("loginErrorBox");
       const btn = document.getElementById("loginSubmitBtn");
       errBox.classList.add("hidden");
 
-      if (email !== ALLOWED_ADMIN_EMAIL) {
-        errBox.textContent = "Incorrect admin email or password. Please try again.";
-        errBox.classList.remove("hidden");
-        return;
-      }
-      if (!firebaseAuth) {
-        errBox.textContent = "Authentication service not initialized. Please check server environment settings.";
-        errBox.classList.remove("hidden");
-        return;
-      }
-
+      if (!firebaseAuth) return;
       btn.disabled = true;
-      btn.innerHTML = "<span>Verifying credentials...</span>";
+      btn.textContent = "Signing in...";
       try {
         await signInWithEmailAndPassword(firebaseAuth, email, pass);
       } catch (err) {
@@ -651,12 +944,37 @@
         errBox.classList.remove("hidden");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = "<span>🔒 Unlock Admin Dashboard</span>";
+        btn.textContent = "Sign In to Dashboard";
       }
     };
 
-    window.handleAdminLogout = async function () {
-      isCloudAuthenticated = false;
+    window.handleUserSignup = async function (e) {
+      e.preventDefault();
+      const ownerName = document.getElementById("signupName").value.trim();
+      const phone = document.getElementById("signupPhone").value.trim();
+      const email = document.getElementById("signupEmail").value.trim();
+      const pass = document.getElementById("signupPassword").value;
+      const errBox = document.getElementById("signupErrorBox");
+      const btn = document.getElementById("signupSubmitBtn");
+      errBox.classList.add("hidden");
+
+      if (!firebaseAuth) return;
+      btn.disabled = true;
+      btn.textContent = "Creating account...";
+      try {
+        sessionStorage.setItem("pending_signup_profile", JSON.stringify({ ownerName, phone }));
+        await createUserWithEmailAndPassword(firebaseAuth, email, pass);
+      } catch (err) {
+        sessionStorage.removeItem("pending_signup_profile");
+        errBox.textContent = formatFriendlyAuthError(err);
+        errBox.classList.remove("hidden");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Create Free Account";
+      }
+    };
+
+    window.handleUserLogout = async function () {
       if (firebaseAuth) {
         try { await signOut(firebaseAuth); } catch (_) {}
       }
@@ -665,12 +983,13 @@
       document.getElementById("authGate").classList.remove("hidden");
     };
 
-    function getUserStatus(u) {
+    function getUserStatus(u, customSettings = null) {
+      const cfg = customSettings || appState.settings;
       const today = new Date(todayISO(0));
       const exp = new Date(u.expiryDate);
       const diffDays = Math.ceil((exp - today) / (1000 * 60 * 60 * 24));
       if (diffDays < 0) return { key: "overdue", label: `Overdue (${Math.abs(diffDays)}d)`, badge: "bg-rose-500/15 text-rose-300 border-rose-500/30" };
-      if (diffDays <= Number(appState.settings.dueSoonDays || 5)) return { key: "duesoon", label: `Due in ${diffDays}d`, badge: "bg-amber-500/15 text-amber-300 border-amber-500/30" };
+      if (diffDays <= Number(cfg?.dueSoonDays || 5)) return { key: "duesoon", label: `Due in ${diffDays}d`, badge: "bg-amber-500/15 text-amber-300 border-amber-500/30" };
       return { key: "ok", label: `Active (${diffDays}d)`, badge: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30" };
     }
 
@@ -702,7 +1021,7 @@
       const today = todayISO(0);
       const monthPrefix = today.slice(0, 7);
       document.getElementById("todayDateLabel").textContent = today;
-      document.getElementById("ssidBadge").textContent = appState.settings.ssid || "HomeWiFi_Zone";
+      document.getElementById("ssidBadge").textContent = appState.settings.ssid || "My Wi-Fi Zone";
       document.getElementById("dashCycleDays").textContent = appState.settings.cycleDays;
       document.getElementById("dashDueSoonDays").textContent = appState.settings.dueSoonDays;
       document.getElementById("dashRouterIp").textContent = appState.settings.routerIp;
@@ -715,14 +1034,14 @@
       document.getElementById("setPaymentNumber").value = appState.settings.paymentNumber || "";
 
       let overdue = 0, duesoon = 0, ok = 0;
-      appState.users.forEach(u => {
+      (appState.users || []).forEach(u => {
         const st = getUserStatus(u);
         if (st.key === "overdue") overdue++;
         else if (st.key === "duesoon") duesoon++;
         else ok++;
       });
 
-      document.getElementById("statTotal").textContent = appState.users.length;
+      document.getElementById("statTotal").textContent = (appState.users || []).length;
       document.getElementById("statOverdue").textContent = overdue;
       document.getElementById("statDueSoon").textContent = duesoon;
       document.getElementById("statOk").textContent = ok;
@@ -730,12 +1049,12 @@
       document.getElementById("sideDueSoonCount").textContent = duesoon;
       document.getElementById("topAlertCount").textContent = overdue + duesoon;
 
-      const todayCol = appState.payments.filter(p => p.date === today).reduce((s, p) => s + Number(p.amount || 0), 0);
-      const monthCol = appState.payments.filter(p => (p.date || "").startsWith(monthPrefix)).reduce((s, p) => s + Number(p.amount || 0), 0);
+      const todayCol = (appState.payments || []).filter(p => p.date === today).reduce((s, p) => s + Number(p.amount || 0), 0);
+      const monthCol = (appState.payments || []).filter(p => (p.date || "").startsWith(monthPrefix)).reduce((s, p) => s + Number(p.amount || 0), 0);
       document.getElementById("statTodayCollection").textContent = todayCol;
       document.getElementById("statMonthCollection").textContent = monthCol;
 
-      document.getElementById("dashboardRecentBody").innerHTML = appState.users.slice(0, 6).map(u => {
+      document.getElementById("dashboardRecentBody").innerHTML = (appState.users || []).slice(0, 6).map(u => {
         const st = getUserStatus(u);
         return `<tr>
           <td class="px-4 py-3 font-medium text-white">${u.name}</td>
@@ -746,10 +1065,10 @@
             <button onclick="renewUser('${u.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25">Renew</button>
           </td>
         </tr>`;
-      }).join("") || `<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400">No users added yet.</td></tr>`;
+      }).join("") || `<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400">No clients added yet. Click "+ Add Client" to start.</td></tr>`;
 
       const q = (document.getElementById("userSearchInput")?.value || "").toLowerCase();
-      const filteredUsers = appState.users.filter(u =>
+      const filteredUsers = (appState.users || []).filter(u =>
         u.name.toLowerCase().includes(q) || (u.phone || "").includes(q) || (u.mac || "").toLowerCase().includes(q)
       );
       document.getElementById("customersTableBody").innerHTML = filteredUsers.map(u => {
@@ -772,9 +1091,9 @@
             <button onclick="deleteUser('${u.id}')" class="px-2.5 py-1 rounded-lg bg-rose-500/15 text-rose-300 border border-rose-500/30">Del</button>
           </td>
         </tr>`;
-      }).join("") || `<tr><td colspan="6" class="px-4 py-6 text-center text-slate-400">No matching Wi-Fi users.</td></tr>`;
+      }).join("") || `<tr><td colspan="6" class="px-4 py-6 text-center text-slate-400">No clients found.</td></tr>`;
 
-      const billUsers = appState.users.filter(u => billingFilter === "all" || getUserStatus(u).key === billingFilter);
+      const billUsers = (appState.users || []).filter(u => billingFilter === "all" || getUserStatus(u).key === billingFilter);
       document.getElementById("billingTableBody").innerHTML = billUsers.map(u => {
         const st = getUserStatus(u);
         return `<tr>
@@ -789,7 +1108,7 @@
         </tr>`;
       }).join("") || `<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400">No records in this filter.</td></tr>`;
 
-      document.getElementById("paymentsTableBody").innerHTML = appState.payments.map(p => `
+      document.getElementById("paymentsTableBody").innerHTML = (appState.payments || []).map(p => `
         <tr>
           <td class="px-4 py-3 text-slate-300">${p.date}</td>
           <td class="px-4 py-3 font-medium text-white">${p.userName}</td>
@@ -804,7 +1123,7 @@
       document.getElementById("editUserId").value = id || "";
       if (id) {
         const u = appState.users.find(x => x.id === id);
-        document.getElementById("userModalTitle").textContent = "Edit Hotspot User";
+        document.getElementById("userModalTitle").textContent = "Edit Wi-Fi Client";
         document.getElementById("userNameInput").value = u.name;
         document.getElementById("userPhoneInput").value = u.phone || "";
         document.getElementById("userMacInput").value = u.mac || "";
@@ -812,7 +1131,7 @@
         document.getElementById("userExpiryInput").value = u.expiryDate;
         document.getElementById("userBlockedInput").checked = !!u.blocked;
       } else {
-        document.getElementById("userModalTitle").textContent = "Add Hotspot User";
+        document.getElementById("userModalTitle").textContent = "Add Wi-Fi Client";
         document.getElementById("userNameInput").value = "";
         document.getElementById("userPhoneInput").value = "";
         document.getElementById("userMacInput").value = "";
@@ -840,29 +1159,34 @@
       if (id) {
         const idx = appState.users.findIndex(x => x.id === id);
         if (idx > -1) appState.users[idx] = payload;
+        logActivity(`Updated client "${payload.name}"`);
       } else {
         appState.users.unshift(payload);
+        logActivity(`Added new client "${payload.name}" (৳${payload.fee})`);
       }
       closeUserModal();
       renderAll();
       await persistState();
-      showToast("User saved successfully.");
+      showToast("Client saved successfully.");
     };
 
     window.toggleBlockUser = async function (id) {
       const u = appState.users.find(x => x.id === id);
       if (!u) return;
       u.blocked = !u.blocked;
+      logActivity(`${u.blocked ? "Blocked" : "Unblocked"} client "${u.name}"`);
       renderAll();
       await persistState();
-      showToast(u.blocked ? `Marked ${u.name} as Blocked (Block MAC in Router)` : `Unblocked ${u.name}`);
+      showToast(u.blocked ? `Marked ${u.name} as Blocked` : `Unblocked ${u.name}`);
     };
 
     window.deleteUser = async function (id) {
+      const u = appState.users.find(x => x.id === id);
       appState.users = appState.users.filter(x => x.id !== id);
+      logActivity(`Deleted client "${u ? u.name : id}"`);
       renderAll();
       await persistState();
-      showToast("User removed.");
+      showToast("Client removed.");
     };
 
     window.renewUser = async function (id) {
@@ -880,6 +1204,7 @@
         note: "Renewed until " + u.expiryDate,
         amount: u.fee
       });
+      logActivity(`Renewed "${u.name}" (+৳${u.fee}, expires ${u.expiryDate})`);
       renderAll();
       await persistState();
       showToast(`Renewed ${u.name} until ${u.expiryDate}`);
@@ -895,7 +1220,7 @@
 
     window.openPaymentModal = function () {
       const sel = document.getElementById("payUserSelect");
-      sel.innerHTML = appState.users.map(u => `<option value="${u.id}">${u.name} (৳${u.fee})</option>`).join("");
+      sel.innerHTML = (appState.users || []).map(u => `<option value="${u.id}">${u.name} (৳${u.fee})</option>`).join("");
       document.getElementById("paymentModal").classList.remove("hidden");
     };
     window.closePaymentModal = () => document.getElementById("paymentModal").classList.add("hidden");
@@ -912,7 +1237,7 @@
       appState.payments.unshift({
         id: "p_" + Date.now(),
         date: todayISO(0),
-        userName: u ? u.name : "Customer",
+        userName: u ? u.name : "Client",
         method,
         note,
         amount
@@ -925,6 +1250,7 @@
         u.blocked = false;
       }
 
+      logActivity(`Recorded ৳${amount} payment from "${u ? u.name : "Client"}" via ${method}`);
       closePaymentModal();
       renderAll();
       await persistState();
@@ -938,6 +1264,7 @@
       appState.settings.cycleDays = Number(document.getElementById("setCycleDays").value) || 30;
       appState.settings.dueSoonDays = Number(document.getElementById("setDueSoonDays").value) || 5;
       appState.settings.paymentNumber = document.getElementById("setPaymentNumber").value.trim();
+      logActivity("Updated hotspot & router settings");
       renderAll();
       await persistState();
       showToast("Settings saved!");
@@ -959,7 +1286,10 @@
         try {
           const parsed = JSON.parse(ev.target.result);
           if (parsed.users && parsed.settings) {
-            appState = parsed;
+            appState.users = parsed.users;
+            appState.payments = parsed.payments || [];
+            appState.settings = parsed.settings;
+            logActivity("Imported JSON backup");
             renderAll();
             await persistState();
             showToast("Backup restored successfully!");
