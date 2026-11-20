@@ -32,6 +32,13 @@
       border: 1px solid rgba(244, 63, 94, 0.35);
       color: #FFF;
     }
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+      -webkit-text-fill-color: #ffffff;
+      -webkit-box-shadow: 0 0 0px 1000px #0f172a inset;
+      transition: background-color 5000s ease-in-out 0s;
+    }
   </style>
 </head>
 <body class="antialiased selection:bg-rose-500/30 selection:text-white">
@@ -55,8 +62,8 @@
       <form id="loginForm" onsubmit="handleAdminLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1.5">Admin Email</label>
-          <input id="loginEmail" type="email" value="homewifi@gmail.com" required
-            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-white/10 text-sky-300 text-sm focus:outline-none focus:border-sky-500" />
+          <input id="loginEmail" type="email" placeholder="Enter your admin email" required
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-white/10 text-white text-sm focus:outline-none focus:border-sky-500" />
         </div>
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1.5">Admin Password</label>
@@ -625,7 +632,7 @@
       errBox.classList.add("hidden");
 
       if (email !== ALLOWED_ADMIN_EMAIL) {
-        errBox.textContent = "Access denied: Only " + ALLOWED_ADMIN_EMAIL + " is authorized.";
+        errBox.textContent = "Incorrect admin email or password. Please try again.";
         errBox.classList.remove("hidden");
         return;
       }
